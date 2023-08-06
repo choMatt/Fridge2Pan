@@ -3,7 +3,7 @@ import ContentLoader from "../components/ContentLoader";
 import MarkdownView from "react-showdown";
 import { collection, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { db, auth } from "../firebase";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { nanoid } from "nanoid";
 
 const recipeRef = collection(db, "recipes");
@@ -16,6 +16,7 @@ export default function Search() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const { isDarkMode } = useOutletContext();
 
   const apiURL = import.meta.env.VITE_REACT_API_URL;
   const apiKey = import.meta.env.VITE_REACT_API_KEY;
@@ -44,6 +45,8 @@ export default function Search() {
       } else {
         await setDoc(recipesDocRef, { recipes: [newRecipe] });
       }
+    } else {
+      navigate("/saved-recipes");
     }
   }
 
@@ -107,16 +110,44 @@ export default function Search() {
     <section>
       <div className="search-wrapper">
         <div className="search">
-            {!recipe && <form className="search-form" onSubmit={handleSubmit}>
+          {!recipe && (
+            <form
+              style={{ border: isDarkMode && "1px solid rgb(187, 187, 187)" }}
+              className="search-form"
+              onSubmit={handleSubmit}
+            >
               <input
                 className="search-form__input"
                 type="text"
                 onChange={handleInputUpdate}
                 placeholder="Search for recipes"
+                style={{ color: isDarkMode && "white" }}
               />
-              <button className="search-form__button" type="submit">Search</button>
-            </form>}
-            {recipe && (
+              <button className="search-form__button" type="submit">
+                Search
+              </button>
+            </form>
+          )}
+          {recipe && (
+            <>
+              <form
+                style={{ border: isDarkMode && "1px solid rgb(187, 187, 187)" }}
+                className="search-form"
+                onSubmit={handleSubmit}
+              >
+                <input
+                  className="search-form__input"
+                  type="text"
+                  onChange={handleInputUpdate}
+                  placeholder="Search for recipes"
+                  style={{
+                    color: isDarkMode && "white",
+                  }}
+                />
+                <button className="search-form__button" type="submit">
+                  Search
+                </button>
+              </form>
               <div className="recipe-card">
                 {/* <h3>Recipe for {dish}:</h3> */}
                 <button className="save-recipe-btn" onClick={saveRecipe}>
@@ -127,8 +158,8 @@ export default function Search() {
                   markdown={recipe}
                 />
               </div>
-            )}
-
+            </>
+          )}
         </div>
       </div>
     </section>

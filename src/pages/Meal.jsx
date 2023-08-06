@@ -1,17 +1,51 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import MarkdownView from "react-showdown";
+import { collection, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
+import { db, auth } from "../firebase";
+import { useNavigate } from "react-router-dom";
+import { nanoid } from "nanoid";
+
+const recipeRef = collection(db, "recipes");
 
 export default function Meal() {
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigateBack = useNavigate();
+  const navigate = useNavigate();
 
   const apiURL = import.meta.env.VITE_REACT_API_URL;
   const apiKey = import.meta.env.VITE_REACT_API_KEY;
   const apiOrg = import.meta.env.VITE_REACT_API_ORG;
   const apiModel = import.meta.env.VITE_REACT_API_MODEL;
+
+  async function saveRecipe() {
+    if (auth.currentUser) {
+      const dish = prompt("Please name your recipe.")
+      const newRecipe = {
+        recipe: response,
+        username: auth.currentUser.displayName,
+        email: auth.currentUser.email,
+        uid: auth.currentUser.uid,
+        name: dish.charAt(0).toUpperCase() + dish.slice(1),
+        recipeId: nanoid(),
+      };
+
+      const recipesDocRef = doc(recipeRef, "recipes");
+      const recipesDocSnapshot = await getDoc(recipesDocRef);
+      if (recipesDocSnapshot.exists() && recipesDocSnapshot.data().recipes) {
+        const existingRecipes = recipesDocSnapshot.data().recipes;
+        const updatedRecipes = [...existingRecipes, newRecipe];
+
+        await updateDoc(recipesDocRef, { recipes: updatedRecipes });
+        navigate("/saved-recipes");
+      } else {
+        await setDoc(recipesDocRef, { recipes: [newRecipe] });
+      }
+    } else {
+      navigate("/saved-recipes");
+    }
+  }
 
   const handleNavigateBack = () => {
     navigateBack(-1); // Navigate back to the previous link
@@ -100,7 +134,7 @@ export default function Meal() {
           </span>
           <h3>Try this one!</h3>
           <div className="meal-response">
-            <button className="save-recipe-btn">save</button>
+            <button onClick={saveRecipe} className="save-recipe-btn">save</button>
             <MarkdownView
               className="markdown-component"
               markdown={response}

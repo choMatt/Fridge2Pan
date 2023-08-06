@@ -5,8 +5,7 @@ import { AuthContext } from "../context/authContext";
 import { auth } from "../firebase";
 import { motion } from "framer-motion";
 
-
-export default function Header({ toggleDarkMode, isDarkMode, darkTheme}) { 
+export default function Header({ toggleDarkMode, isDarkMode, darkTheme }) {
   const [isChecked, setIsChecked] = useState(false);
   const { currentUser } = useContext(AuthContext);
 
@@ -20,18 +19,18 @@ export default function Header({ toggleDarkMode, isDarkMode, darkTheme}) {
 
   const burgerActiveStyles = {
     textDecorationColor: "#adadff",
-    color:"#f55742",
+    color: "#f55742",
     backgroundColor: "transparent",
-    textDecoration: "underline"
+    textDecoration: "underline",
   };
 
   const burgerToggleDark = {
     backgroundColor: isDarkMode && "white",
-  }
+  };
 
   const mainLogoDark = {
     boxShadow: isDarkMode && "-5px 8px 2px 1px rgba(64,68,75, 0.219)",
-  }
+  };
 
   const handleClick = () => {
     setIsChecked(!isChecked);
@@ -50,8 +49,10 @@ export default function Header({ toggleDarkMode, isDarkMode, darkTheme}) {
 
   return (
     <header>
-      <Link to="/">
-        <h1 className="main-logo" style={mainLogoDark}>Fridge2Pan 🥑</h1>
+      <Link className="main-logo-link" to="/">
+        <h1 className="main-logo" style={mainLogoDark}>
+          Fridge2Pan 🥑
+        </h1>
       </Link>
 
       <nav className="nav-menu">
@@ -100,12 +101,15 @@ export default function Header({ toggleDarkMode, isDarkMode, darkTheme}) {
             Log out
           </NavLink>
         )}
-       
+
+        <label className="switch">
+          <input type="checkbox" onClick={toggleDarkMode} />
+          <span className="slider"></span>
+        </label>
       </nav>
 
       {/*--- BURGER MENU ---*/}
       <nav className="burger-menu">
-
         <input
           type="checkbox"
           className="burger-toggle"
@@ -129,10 +133,9 @@ export default function Header({ toggleDarkMode, isDarkMode, darkTheme}) {
           transition={{ duration: 0.6 }}
           style={darkTheme}
         >
-              
-          <label className="switch" >
-              <input type="checkbox" onClick={toggleDarkMode}/>
-              <span className="slider"></span>
+          <label className="switch">
+            <input type="checkbox" onClick={toggleDarkMode} />
+            <span className="slider"></span>
           </label>
 
           <NavLink

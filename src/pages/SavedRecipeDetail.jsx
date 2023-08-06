@@ -74,7 +74,7 @@ export default function SaveRecipeDetail() {
   });
 
   return (
-    <div>
+    <div className="save-recipe-detail">
       {loading ? (
         <div className="save-recipe-detail-wrapper">
           <p>Loading...</p>

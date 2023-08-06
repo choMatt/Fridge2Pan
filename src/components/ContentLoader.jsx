@@ -8,12 +8,12 @@ export default function ContentLoader(props) {
 
   const cardDarkTheme = {
     boxShadow: isDarkMode && "-5px 8px 2px 1px rgba(64,68,75, 0.219)",
-    backgroundColor: isDarkMode ? "#40444b" : "#FFFFFF",
-    border: isDarkMode && "none",
+    backgroundColor: isDarkMode && "transparent",
+    border: isDarkMode && "1px solid rgb(187, 187, 187)",
   };
 
   const loadingRow = (
-    <div class="load-row">
+    <div className="load-row">
       <span></span>
       <span></span>
       <span></span>
